@@ -71,3 +71,10 @@ class BlogPost:
         self._posts[post_index] = changed_post
         self._save_data()
 
+    def search_posts(self, title, content):
+        """Searches blog posts with selected title and content."""
+        found = []
+        for post in self.posts:
+            if title in post['title'] and content in post['content']:
+                found.append(post)
+        return found

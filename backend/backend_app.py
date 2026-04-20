@@ -78,5 +78,16 @@ def update(post_id):
     return jsonify(message), 200
 
 
+@app.route('/api/posts/search', methods=['GET'])
+def search_posts():
+    """Searches and returns matching blog posts as json"""
+    title = request.args.get("title")
+    content = request.args.get("content")
+    title = title if title is not None else ""
+    content = content if content is not None else ""
+    posts = blog_posts.search_posts(title, content)
+    return jsonify(posts)
+
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5002, debug=True)
