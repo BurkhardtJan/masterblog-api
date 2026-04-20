@@ -65,7 +65,7 @@ class BlogPost:
         changed_post = {
             "id": post_id,
             "title": title,
-            "content": content,
+            "content": content
         }
         post_index = self.fetch_post_position_by_id(post_id)
         self._posts[post_index] = changed_post

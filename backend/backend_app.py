@@ -54,5 +54,29 @@ def delete(post_id):
     return jsonify(message), 200
 
 
+@app.route('/api/posts/<int:post_id>', methods=['PUT'])
+def update(post_id):
+    """Updates a blog post by ID"""
+    post_to_update = blog_posts.fetch_post_by_id(post_id)
+    json_data = request.get_json()
+    if not post_to_update:
+        return jsonify({"error": f"post with id {post_id} not found"}), 404
+    if "title" in json_data:
+        title = json_data["title"]
+    else:
+        title = post_to_update["title"]
+    if "content" in json_data:
+        content = json_data["content"]
+    else:
+        content = post_to_update["content"]
+    blog_posts.change(post_id, title, content)
+    message = {
+        "id": post_id,
+        "title": title,
+        "content": content
+    }
+    return jsonify(message), 200
+
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5002, debug=True)
