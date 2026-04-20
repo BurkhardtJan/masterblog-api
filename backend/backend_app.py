@@ -15,7 +15,15 @@ blog_posts = BlogPost("posts.json")
 @app.route('/api/posts', methods=['GET'])
 def get_posts():
     """Returns blog posts as json"""
-    posts_data = blog_posts.posts
+    sort = request.args.get("sort")
+    direction = request.args.get("direction")
+    sort = sort if sort is not None else "id"
+    direction = direction if direction is not None else "asc"
+    if sort not in ["id", "title", "content"]:
+        return jsonify({"error": f"sort {sort} not found"}), 400
+    if direction not in ["asc", "desc"]:
+        return jsonify({"error": f"direction {direction} not found"}), 400
+    posts_data = blog_posts.sorted(sort, direction)
     return jsonify(posts_data)
 
 

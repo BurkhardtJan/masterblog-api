@@ -78,3 +78,12 @@ class BlogPost:
             if title in post['title'] and content in post['content']:
                 found.append(post)
         return found
+
+    def sorted(self, sort, direction):
+        """Sorts blog posts according to specified sort."""
+        if direction == "desc":
+            reverse = True
+        else:
+            reverse = False
+        sorted_posts = sorted(self._posts, key=lambda p: p[sort], reverse=reverse)
+        return sorted_posts
