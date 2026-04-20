@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flask_swagger_ui import get_swaggerui_blueprint
 from blog_post_handler import BlogPost
 
 app = Flask(__name__)
@@ -24,7 +25,7 @@ def get_posts():
     if direction not in ["asc", "desc"]:
         return jsonify({"error": f"direction {direction} not found"}), 400
     posts_data = blog_posts.sorted(sort, direction)
-    return jsonify(posts_data)
+    return jsonify(posts_data), 200
 
 
 @app.route('/api/posts', methods=['POST'])
@@ -94,8 +95,20 @@ def search_posts():
     title = title if title is not None else ""
     content = content if content is not None else ""
     posts = blog_posts.search_posts(title, content)
-    return jsonify(posts)
+    return jsonify(posts), 200
 
+
+SWAGGER_URL = "/api/docs"  # (1) swagger endpoint e.g. HTTP://localhost:5002/api/docs
+API_URL = "/static/masterblog.json"  # (2) ensure you create this dir and file
+
+swagger_ui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': 'Masterblog API'  # (3) You can change this if you like
+    }
+)
+app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5002, debug=True)

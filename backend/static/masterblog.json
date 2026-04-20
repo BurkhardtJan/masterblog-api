@@ -1,0 +1,167 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Masterblog API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5001"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Post",
+      "description": "Post API - CRUD"
+    }
+  ],
+  "paths": {
+    "/api/posts": {
+      "get": {
+        "summary": "Returns all posts",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Post"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "post": {
+        "summary": "adds new posts",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Post"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful added"
+          },
+          "400": {
+            "description": "Missing arguments"
+          }
+        }
+      }
+    },
+    "/api/posts/{post_id}": {
+      "delete": {
+        "summary": "Deletes post by id",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Post"
+        ],
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted"
+          },
+          "404": {
+            "description": "id not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "updates post by id",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Post"
+        ],
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful updated"
+          },
+          "404": {
+            "description": "id not found"
+          }
+        }
+      }
+    },
+    "/api/posts/search": {
+      "get": {
+        "summary": "Searches and returns matching blog posts",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Post"
+        ],
+        "parameters": [
+          {
+            "name": "title",
+            "in": "query",
+            "type": "string",
+            "description": "search in title"
+          },
+          {
+            "name": "content",
+            "in": "query",
+            "type": "string",
+            "description": "search in content"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    }
+  }
+}
