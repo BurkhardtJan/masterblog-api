@@ -94,3 +94,9 @@ class BlogPost:
             reverse = False
         sorted_posts = sorted(self._posts, key=lambda p: p[sort], reverse=reverse)
         return sorted_posts
+
+    def like(self, post_id):
+        """Likes blog post with selected id."""
+        post_index = self.fetch_post_position_by_id(post_id)
+        self._posts[post_index]['likes'] += 1
+        self._save_data()

@@ -15,9 +15,12 @@ def format_date(user_date):
     formats = ["%d.%m.%Y", "%Y-%m-%d", "%d/%m/%Y"]
     for fmt in formats:
         try:
-            return datetime.strptime(user_date, fmt).strftime('%Y-%m-%d')
+            formated_date = datetime.strptime(user_date, fmt).strftime('%Y-%m-%d')
         except ValueError:
             continue
+        else:
+            return formated_date
+
     return datetime.today().strftime('%Y-%m-%d')
 
 
@@ -69,6 +72,19 @@ def delete(post_id):
     blog_posts.delete(post_id)
     message = {
         "message": f"Post with id {post_id} has been deleted successfully."
+    }
+    return jsonify(message), 200
+
+
+@app.route('/api/posts/<int:post_id>/like', methods=['GET'])
+def like(post_id):
+    """Likes a blog post by ID"""
+    post_to_like = blog_posts.fetch_post_by_id(post_id)
+    if not post_to_like:
+        return jsonify({"error": f"post with id {post_id} not found"}), 404
+    blog_posts.like(post_id)
+    message = {
+        "message": f"Post with id {post_id} has been liked successfully."
     }
     return jsonify(message), 200
 
