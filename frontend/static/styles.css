@@ -78,15 +78,24 @@ body {
 
 .post .right-buttons {
     position: absolute;
-    top: 10px;
+    top: 20px;
     right: 10px;
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
 
-.post .right-buttons button {
+.delete {
     background-color: #ff4444;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.like {
+    background-color: #1756aa;
     color: #fff;
     border: none;
     padding: 5px 10px;

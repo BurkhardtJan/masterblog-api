@@ -76,7 +76,7 @@ def delete(post_id):
     return jsonify(message), 200
 
 
-@app.route('/api/posts/<int:post_id>/like', methods=['GET'])
+@app.route('/api/posts/<int:post_id>/like', methods=['PUT'])
 def like(post_id):
     """Likes a blog post by ID"""
     post_to_like = blog_posts.fetch_post_by_id(post_id)
