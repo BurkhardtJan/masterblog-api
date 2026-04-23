@@ -1,6 +1,6 @@
 import json
 import os
-
+from datetime import datetime
 
 class BlogPost:
     """Manage blog posts in JSON."""
@@ -26,7 +26,7 @@ class BlogPost:
         """Returns list of blog posts."""
         return self._posts
 
-    def add(self, title, content):
+    def add(self, title, content, author="Anonym", date=datetime.today().strftime('%Y-%m-%d')):
         """Adds and saves blog post. Sets id to max(id)+1"""
         new_id = max([p['id'] for p in self._posts], default=0) + 1
 
@@ -34,6 +34,10 @@ class BlogPost:
             "id": new_id,
             "title": title,
             "content": content,
+            "author": author,
+            "date": date,
+            "likes": 0,
+
         }
         self._posts.append(new_post)
         self._save_data()
@@ -60,22 +64,25 @@ class BlogPost:
             i += 1
         return None
 
-    def change(self, post_id, title, content):
+    def change(self, post_id, title, content, author = "Anonym", date=datetime.today().strftime('%Y-%m-%d')):
         """Changes blog post with selected id."""
         changed_post = {
             "id": post_id,
             "title": title,
-            "content": content
+            "content": content,
+            "author": author,
+            "date": date,
+            "likes": 0,
         }
         post_index = self.fetch_post_position_by_id(post_id)
         self._posts[post_index] = changed_post
         self._save_data()
 
-    def search_posts(self, title, content):
+    def search_posts(self, title, content, author, date):
         """Searches blog posts with selected title and content."""
         found = []
         for post in self.posts:
-            if title in post['title'] and content in post['content']:
+            if title in post['title'] and content in post['content'] and author in post['author'] and date in post['date']:
                 found.append(post)
         return found
 

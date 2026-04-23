@@ -2,15 +2,23 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
 from blog_post_handler import BlogPost
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)  # This will enable CORS for all routes
 
-POSTS = [
-    {"id": 1, "title": "First post", "content": "This is the first post."},
-    {"id": 2, "title": "Second post", "content": "This is the second post."},
-]
 blog_posts = BlogPost("posts.json")
+
+
+def format_date(user_date):
+    """Tries to convert date to YYYY-MM-DD. Returns today if invalid format."""
+    formats = ["%d.%m.%Y", "%Y-%m-%d", "%d/%m/%Y"]
+    for fmt in formats:
+        try:
+            return datetime.strptime(user_date, fmt).strftime('%Y-%m-%d')
+        except ValueError:
+            continue
+    return datetime.today().strftime('%Y-%m-%d')
 
 
 @app.route('/api/posts', methods=['GET'])
@@ -20,7 +28,7 @@ def get_posts():
     direction = request.args.get("direction")
     sort = sort if sort is not None else "id"
     direction = direction if direction is not None else "asc"
-    if sort not in ["id", "title", "content"]:
+    if sort not in ["id", "title", "content", "author", "date", "likes"]:
         return jsonify({"error": f"sort {sort} not found"}), 400
     if direction not in ["asc", "desc"]:
         return jsonify({"error": f"direction {direction} not found"}), 400
@@ -38,6 +46,8 @@ def add_post():
         return jsonify({"error": "title is required"}), 400
     elif not "content" in json_data:
         return jsonify({"error": "content is required"}), 400
+    author = json_data["author"] if "author" in json_data else "Anonym"
+    date = format_date(json_data["date"]) if "date" in json_data else datetime.today().strftime('%Y-%m-%d')
     title = json_data["title"]
     content = json_data["content"]
     if title == "" and content == "":
@@ -46,7 +56,7 @@ def add_post():
         return jsonify({"error": "title is required"}), 400
     elif content == "":
         return jsonify({"error": "content is required"}), 400
-    new_post = blog_posts.add(title, content)
+    new_post = blog_posts.add(title, content, author, date)
     return jsonify(new_post), 201
 
 
@@ -78,11 +88,21 @@ def update(post_id):
         content = json_data["content"]
     else:
         content = post_to_update["content"]
-    blog_posts.change(post_id, title, content)
+    if "author" in json_data:
+        author = json_data["author"]
+    else:
+        author = post_to_update["author"]
+    if "date" in json_data:
+        date = format_date(json_data["date"])
+    else:
+        date = datetime.today().strftime('%Y-%m-%d')
+    blog_posts.change(post_id, title, content, author, date)
     message = {
         "id": post_id,
         "title": title,
-        "content": content
+        "content": content,
+        "author": author,
+        "date": date
     }
     return jsonify(message), 200
 
@@ -92,9 +112,13 @@ def search_posts():
     """Searches and returns matching blog posts as json"""
     title = request.args.get("title")
     content = request.args.get("content")
+    author = request.args.get("author")
+    date = request.args.get("date")
     title = title if title is not None else ""
     content = content if content is not None else ""
-    posts = blog_posts.search_posts(title, content)
+    author = author if author is not None else ""
+    date = date if date is not None else ""
+    posts = blog_posts.search_posts(title, content, author, date)
     return jsonify(posts), 200
 
 
